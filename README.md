@@ -12,6 +12,19 @@ WeightFormer: Direct Prediction of Molecular Mass from Electron lonization Mass 
 conda create -n WeightFormer python=3.9  
 conda activate WeightFormer  
 ```
+4.Clone the repository and enter.  
+```
+git clone https://github.com/zhanghailiangcsu/WeightFormer.git
+```
+5.Install dependency with the following commands.
+```
+pip install -r requirements.txt
+```
+6.Install  Pytorch
+```
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+```
+
 
 # 4. Usage
 
