@@ -10,7 +10,6 @@ import numpy as np
 from tqdm import tqdm
 import pandas as pd
 from sklearn.metrics import mean_squared_error,mean_absolute_error
-import torch
 import matplotlib.pyplot as plt
 
 def PlotResults(true_weights,predict_weights):
@@ -94,5 +93,14 @@ def CalPIMMetrice(pim_data,weights_test):
     mae = mean_absolute_error(weights_test2,pim_data2)
     return mae,rmse
 
-
+def CompareOther(weights_test,pred_result):
+    weights_test = [i.cpu().numpy() for i in weights_test]
+    weights_test = [i.ravel()[0] for i in  weights_test]
+    index = [i for i,v in enumerate(pred_result) if v != None]
+    pred_result2 = [pred_result[i] for i in index]
+    weights_test2 = [weights_test[i] for i in index]
+    rmse = np.sqrt(mean_squared_error(weights_test2,pred_result2))
+    mae = mean_absolute_error(weights_test2,pred_result2)
+    PlotResults(weights_test2,pred_result2)
+    return rmse,mae
     
