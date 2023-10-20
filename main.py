@@ -71,17 +71,17 @@ if __name__ == '__main__':
     rmse,mae = CalWeights(true_weights,predict_weights)
     
     nist_vec = Test2vec(mz_list_test,intensity_list_test)
-    pickle.dump(nist_vec, open('E:/github/WeightFormer/EIMSdata/test_data.pickle','wb'))
+    pickle.dump(nist_vec, open('EIMSdata/test_data.pickle','wb'))
     
     qsar_data = BulidQSARData(mz_list_test,intensity_list_test)
     SaveQSARData(qsar_data)
     
-    qrsa_pred_file = 'E:/github/WeightFormer/EIMSdata/result'
+    qrsa_pred_file = 'EIMSdata/result'
     pred_result = LoadQRSAPredData(qrsa_pred_file)
     rmse_q,mae_q = CompareOther(weights_test,pred_result)
     
     
-    pim_data_file = 'E:/github/WeightFormer/EIMSdata/pred_mass.npy'
+    pim_data_file = 'EIMSdata/pred_mass.npy'
     pim_data = LoadPIMData(pim_data_file)
     rmse_p,mae_p = CompareOther(weights_test,pim_data)
     
