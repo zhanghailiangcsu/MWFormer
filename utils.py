@@ -85,14 +85,6 @@ def LoadPIMData(pim_data_file):
     pim_data = list(np.load(pim_data_file,allow_pickle=True))
     return pim_data
 
-def CalPIMMetrice(pim_data,weights_test):
-    index = [i for i,v in enumerate(pim_data) if v != None]
-    pim_data2 = [pim_data[i] for i in index]
-    weights_test2 = [weights_test[i] for i in index]
-    rmse = np.sqrt(mean_squared_error(weights_test2,pim_data2))
-    mae = mean_absolute_error(weights_test2,pim_data2)
-    return mae,rmse
-
 def CompareOther(weights_test,pred_result):
     weights_test = [i.cpu().numpy() for i in weights_test]
     weights_test = [i.ravel()[0] for i in  weights_test]
