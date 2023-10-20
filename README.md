@@ -8,10 +8,10 @@ WeightFormer: Direct Prediction of Molecular Mass from Electron lonization Mass 
 1.Install anaconda   
 2.Install [Git](https://git-scm.com/downloads)  
 3.Open commond line, create environment and enter with the following commands.   
-'''
+```
 conda create -n WeightFormer python=3.9  
 conda activate WeightFormer  
-'''
+```
 
 # 4. Usage
 
