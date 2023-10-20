@@ -31,7 +31,7 @@ def dataset_sep(mz_list,intensity_list,weights,val_size):
     weights_val = [weights[x] for x in perm_val]
     return mz_list_train,intensity_list_train,weights_train,mz_list_val,intensity_list_val,weights_val
 
-def train(model,mz_list_train,intensity_list_train,weights_train,batch_size,lr,epochs):
+def Train(model,mz_list_train,intensity_list_train,weights_train,batch_size,lr,epochs):
     mz_list_train,intensity_list_train,weights_train,mz_list_val,intensity_list_val,weights_val = dataset_sep(mz_list_train,intensity_list_train,weights_train,0.1)
     dataset_train = MyDataSet(mz_list_train,intensity_list_train,weights_train)
     dataloader_train = Data.DataLoader(dataset_train, batch_size=batch_size, shuffle=True)
@@ -89,8 +89,9 @@ def Predict(model,mz_list_test,intensity_list_test,weights_test,batch_size):
     dataset_test = MyDataSet(mz_list_test,intensity_list_test,weights_test)
     dataloader_test = Data.DataLoader(dataset_test, batch_size=batch_size, shuffle=True)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    raw_weights = []
-    pred_weights = []
+    model = model.to(device)
+    true_weights = []
+    predict_weights = []
     model.eval()
     with torch.no_grad():
         for step,(mz_,intensity_,weights_) in tqdm(enumerate(dataloader_test)):
@@ -100,13 +101,13 @@ def Predict(model,mz_list_test,intensity_list_test,weights_test,batch_size):
             weights_ = weights_.to(device).float()
             weights_ = weights_.unsqueeze(1)
             out = model(mz_,intensity_)
-            raw_weights.append(weights_.detach().cpu().numpy())
-            pred_weights.append(out.detach().cpu().numpy())
-    raw_weights = [i.ravel() for i in raw_weights]
-    raw_weights = np.concatenate(raw_weights)
-    pred_weights = [i.ravel() for i in pred_weights]
-    pred_weights = np.concatenate(pred_weights)
-    return raw_weights,pred_weights
+            true_weights.append(weights_.detach().cpu().numpy())
+            predict_weights.append(out.detach().cpu().numpy())
+    true_weights = [i.ravel() for i in true_weights]
+    true_weights = np.concatenate(true_weights)
+    predict_weights = [i.ravel() for i in predict_weights]
+    predict_weights = np.concatenate(predict_weights)
+    return true_weights,predict_weights
 
 def PlotLoss(train_loss,val_loss):
     train_loss2 = [np.nanmean(i) for i in train_loss]
