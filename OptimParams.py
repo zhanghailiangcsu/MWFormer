@@ -12,6 +12,8 @@ import torch.optim as optim
 import torch
 from timm.scheduler import CosineLRScheduler
 import pickle
+from utils import CalWeights
+from TrainModel import Predict
 
 def objective(trial):
     hidden = trial.suggest_categorical('hidden',[32,64,128,256])
@@ -47,8 +49,11 @@ def objective(trial):
             optimizer.step()
             scheduler.step(step_count)
             step_count += 1
-    
-    return 0
+    model.eval()
+    with torch.no_grad():
+        true_weights,predict_weights = Predict(model,mz_list_test,intensity_list_test,weights_test,batch_size)
+        rmse,_ = CalWeights(true_weights,predict_weights)
+    return rmse
 
 if __name__ == '__main__':
     with open('E:/github/WeightFormer/EIMSdata/mz_list_train.pickle','rb') as f:
@@ -57,6 +62,12 @@ if __name__ == '__main__':
         intensity_list_train = pickle.load(f)
     with open('E:/github/WeightFormer/EIMSdata/weights_train.pickle','rb') as f:
         weights_train = pickle.load(f)
+    with open('E:/github/WeightFormer/EIMSdata/mz_list_test.pickle','rb') as f:
+        mz_list_test = pickle.load(f)
+    with open('E:/github/WeightFormer/EIMSdata/intensity_list_test.pickle','rb') as f:
+        intensity_list_test = pickle.load(f)
+    with open('E:/github/WeightFormer/EIMSdata/weights_test.pickle','rb') as f:
+        weights_test = pickle.load(f)
     study_name = 'WeightFormer'
     study = optuna.create_study(study_name=study_name,direction="maximize")
     study.optimize(objective, n_trials=20)
