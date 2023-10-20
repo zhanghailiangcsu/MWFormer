@@ -8,7 +8,6 @@ import os
 os.chdir('E:/github/WeightFormer')
 import numpy as np
 from tqdm import tqdm
-# from ms_vec import ms_to_vec
 from rdkit import Chem  
 from rdkit.Chem import Descriptors
 
@@ -16,7 +15,6 @@ def Peak2Vec(peak):
     peak = peak.split()
     mz = np.array([])
     intensity = np.array([])
-    # p = peak[0]
     for p in peak:
         p = p.split(':')
         mz = np.append(mz, float(p[0]))
@@ -26,14 +24,11 @@ def Peak2Vec(peak):
     return vec
 
 def DataTran(ei_ms):
-    # i = 0
     smiles = list(ei_ms['smiles'])
     peak_vec = []
-    # m = ms_to_vec(precision = 1, max_mz = 1000)
     for i in tqdm(range(len(ei_ms))):
         peak = ei_ms.iloc[i,:][1]
         vec = Peak2Vec(peak)
-        # vec = m.transform(vec)
         peak_vec.append(vec)
     return smiles,peak_vec
 
@@ -43,7 +38,6 @@ def GetWeight(smiles):
         mol = Chem.MolFromSmiles(s)
         mol_weight = Descriptors.MolWt(mol) 
         weights.append(mol_weight)
-    # weights = [i/1000 for i in weights]
     return weights
     
 def LengthFilter(smiles,peak_vec):
@@ -65,31 +59,6 @@ def Pad_data(peak_vec,max_len=200):
             mz_list.append(mz)
             intensity_list.append(intensity)
     return mz_list,intensity_list
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
