@@ -24,10 +24,8 @@ pip install -r requirements.txt
 ```
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
-
-
 # 4. Usage
-
+The dffROI is public at [homepage](https://github.com/zhanghailiangcsu), every user can download and use it.
 # 5. Contact
 Hailiang Zhang   
 E-mail 2352434994@qq.com
