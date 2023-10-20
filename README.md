@@ -1,2 +1,2 @@
 # WeightFormer
-WeightFormer: Transformer encoder for high-precision prediction of EI-MS molecular weight
+WeightFormer: Direct Prediction of Molecular Mass from Electron lonization Mass Spectrum byIransformer
