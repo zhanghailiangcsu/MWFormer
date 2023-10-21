@@ -13,6 +13,9 @@ from sklearn.metrics import mean_squared_error,mean_absolute_error
 import matplotlib.pyplot as plt
 
 def PlotResults(true_weights,predict_weights,title):
+    '''
+    Draw scatter plots of predicted and true results
+    '''
     plt.figure()
     plt.scatter(true_weights,predict_weights,s=0.5)
     plt.xlabel('True Weights ')
@@ -25,11 +28,17 @@ def PlotResults(true_weights,predict_weights,title):
     plt.show()
 
 def CalWeights(true_weights,predict_weights):
+    '''
+    Calculate RMSE and MAE evaluation indicators
+    '''
     rmse = np.sqrt(mean_squared_error(true_weights,predict_weights))
     mae = mean_absolute_error(true_weights,predict_weights)
     return rmse,mae
 
 def Test2vec(mz_list_test,intensity_list_test):
+    '''
+    Convert the test set into the data types required for the PIM model
+    '''
     nist_vec = []
     mz_list_test = [i.cpu().numpy() for i in mz_list_test]
     intensity_list_test = [i.cpu().numpy() for i in intensity_list_test]
@@ -42,6 +51,9 @@ def Test2vec(mz_list_test,intensity_list_test):
     return nist_vec
 
 def BulidQSARData(mz_list_test,intensity_list_test):
+    '''
+    Convert the test set into the data types required for the QSAR model
+    '''
     mz_list_test = [i.cpu().numpy() for i in mz_list_test]
     intensity_list_test = [i.cpu().numpy() for i in intensity_list_test]
     qsar_data = []
@@ -61,6 +73,9 @@ def BulidQSARData(mz_list_test,intensity_list_test):
     return qsar_data
 
 def SaveQSARData(qsar_data):
+    '''
+    Store every 1000 spectra as cvs files
+    '''
     start = 0
     end = start+2000
     while start < qsar_data.shape[1]:
@@ -70,6 +85,9 @@ def SaveQSARData(qsar_data):
         end += 2000
 
 def LoadQRSAPredData(qrsa_pred_file):
+    '''
+    Loading the test set predicted result by the QSAR model
+    '''
     file_list = os.listdir(qrsa_pred_file)
     number = [float(i[0:-3]) for i in file_list]
     sort = np.argsort(number)
@@ -83,10 +101,16 @@ def LoadQRSAPredData(qrsa_pred_file):
     return mw_list
 
 def LoadPIMData(pim_data_file):
+    '''
+    Loading the test set predicted result by the PIM model
+    '''
     pim_data = list(np.load(pim_data_file,allow_pickle=True))
     return pim_data
 
 def CompareOther(weights_test,pred_result,title):
+    '''
+    Draw scatter plots of true data and predicted results obtained from other algorithms
+    '''
     weights_test = [i.cpu().numpy() for i in weights_test]
     weights_test = [i.ravel()[0] for i in  weights_test]
     index = [i for i,v in enumerate(pred_result) if v != None]
