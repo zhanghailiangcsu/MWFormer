@@ -26,6 +26,7 @@ pip3 install torch torchvision torchaudio --index-url https://download.pytorch.o
 ```
 # 4. Usage
 The WeightFormer is public at [homepage](https://github.com/zhanghailiangcsu), every user can download and use it.
+You can download the trained model on Github.
 # 5. Contact
 Hailiang Zhang   
 E-mail 2352434994@qq.com
