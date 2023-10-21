@@ -16,6 +16,9 @@ from utils import CalWeights
 from TrainModel import Predict
 
 def objective(trial):
+    '''
+    Define objective function
+    '''
     hidden = trial.suggest_categorical('hidden',[32,64,128,256])
     batch_size = trial.suggest_categorical('batch_size',[16,32,64])
     n_layers = trial.suggest_categorical('n_layers',[3,4,5,6,7])
