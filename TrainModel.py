@@ -17,6 +17,9 @@ from tqdm import tqdm
 from timm.scheduler import CosineLRScheduler
 
 def dataset_sep(mz_list,intensity_list,weights,val_size):
+    '''
+    Randomly split the dataset
+    '''
     np.random.seed(0)
     n = len(weights)
     perm = np.random.permutation(n)
@@ -32,6 +35,9 @@ def dataset_sep(mz_list,intensity_list,weights,val_size):
     return mz_list_train,intensity_list_train,weights_train,mz_list_val,intensity_list_val,weights_val
 
 def Train(model,mz_list_train,intensity_list_train,weights_train,batch_size,lr,epochs):
+    '''
+    Training the WeightFormer model
+    '''
     mz_list_train,intensity_list_train,weights_train,mz_list_val,intensity_list_val,weights_val = dataset_sep(mz_list_train,intensity_list_train,weights_train,0.1)
     dataset_train = MyDataSet(mz_list_train,intensity_list_train,weights_train)
     dataloader_train = Data.DataLoader(dataset_train, batch_size=batch_size, shuffle=True)
@@ -86,6 +92,9 @@ def Train(model,mz_list_train,intensity_list_train,weights_train,batch_size,lr,e
     return model,train_loss,val_loss
 
 def Predict(model,mz_list_test,intensity_list_test,weights_test,batch_size):
+    '''
+    Using a trained model to predict the molecular weight of the spectrum
+    '''
     dataset_test = MyDataSet(mz_list_test,intensity_list_test,weights_test)
     dataloader_test = Data.DataLoader(dataset_test, batch_size=batch_size, shuffle=True)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -110,6 +119,9 @@ def Predict(model,mz_list_test,intensity_list_test,weights_test,batch_size):
     return true_weights,predict_weights
 
 def PlotLoss(train_loss,val_loss):
+    '''
+    Draw loss curve
+    '''
     train_loss2 = [np.nanmean(i) for i in train_loss]
     val_loss2 = [np.nanmean(i) for i in val_loss]
     plt.plot(train_loss2,label='Train')
