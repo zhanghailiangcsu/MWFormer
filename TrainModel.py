@@ -96,7 +96,7 @@ def Predict(model,mz_list_test,intensity_list_test,weights_test,batch_size):
     Using a trained model to predict the molecular weight of the spectrum
     '''
     dataset_test = MyDataSet(mz_list_test,intensity_list_test,weights_test)
-    dataloader_test = Data.DataLoader(dataset_test, batch_size=batch_size, shuffle=True)
+    dataloader_test = Data.DataLoader(dataset_test, batch_size=batch_size, shuffle=False)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = model.to(device)
     true_weights = []
