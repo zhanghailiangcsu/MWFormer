@@ -65,7 +65,7 @@ if __name__ == '__main__':
     PlotResults(true_weights,predict_weights)
     
     true_weights_train,predict_weights_train = Predict(model,mz_list_train,intensity_list_train,weights_train,batch_size)
-    PlotResults(true_weights,predict_weights)
+    PlotResults(true_weights,predict_weights,'WeightFormer')
     
     
     rmse,mae = CalWeights(true_weights,predict_weights)
@@ -78,12 +78,12 @@ if __name__ == '__main__':
     
     qrsa_pred_file = 'EIMSdata/result'
     pred_result = LoadQRSAPredData(qrsa_pred_file)
-    rmse_q,mae_q = CompareOther(weights_test,pred_result)
+    rmse_q,mae_q = CompareOther(weights_test,pred_result,'QSAR')
     
     
     pim_data_file = 'EIMSdata/pred_mass.npy'
     pim_data = LoadPIMData(pim_data_file)
-    rmse_p,mae_p = CompareOther(weights_test,pim_data)
+    rmse_p,mae_p = CompareOther(weights_test,pim_data,'PIM')
     
 
 
