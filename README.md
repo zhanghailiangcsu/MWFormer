@@ -27,6 +27,7 @@ pip3 install torch torchvision torchaudio --index-url https://download.pytorch.o
 # 4. Usage
 The WeightFormer is public at [homepage](https://github.com/zhanghailiangcsu), every user can download and use it.
 You can download the trained model on Github.
+Then refer to the example to use the model for prediction, and directly obtain the molecular weight from EI-MS.
 # 5. Contact
 Hailiang Zhang   
 E-mail 2352434994@qq.com
