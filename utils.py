@@ -12,7 +12,7 @@ import pandas as pd
 from sklearn.metrics import mean_squared_error,mean_absolute_error
 import matplotlib.pyplot as plt
 
-def PlotResults(true_weights,predict_weights):
+def PlotResults(true_weights,predict_weights,title):
     plt.figure()
     plt.scatter(true_weights,predict_weights,s=0.5)
     plt.xlabel('True Weights ')
@@ -21,6 +21,7 @@ def PlotResults(true_weights,predict_weights):
     plt.plot(diagonal[0,:],diagonal[1,:],color='r')
     plt.xlim(0,max((true_weights)))
     plt.ylim(0,max((true_weights)))
+    plt.title(title)
     plt.show()
 
 def CalWeights(true_weights,predict_weights):
@@ -85,7 +86,7 @@ def LoadPIMData(pim_data_file):
     pim_data = list(np.load(pim_data_file,allow_pickle=True))
     return pim_data
 
-def CompareOther(weights_test,pred_result):
+def CompareOther(weights_test,pred_result,title):
     weights_test = [i.cpu().numpy() for i in weights_test]
     weights_test = [i.ravel()[0] for i in  weights_test]
     index = [i for i,v in enumerate(pred_result) if v != None]
@@ -93,6 +94,6 @@ def CompareOther(weights_test,pred_result):
     weights_test2 = [weights_test[i] for i in index]
     rmse = np.sqrt(mean_squared_error(weights_test2,pred_result2))
     mae = mean_absolute_error(weights_test2,pred_result2)
-    PlotResults(weights_test2,pred_result2)
+    PlotResults(weights_test2,pred_result2,title)
     return rmse,mae
     
