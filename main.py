@@ -62,7 +62,7 @@ if __name__ == '__main__':
     
     
     true_weights,predict_weights = Predict(model,mz_list_test,intensity_list_test,weights_test,batch_size)
-    PlotResults(true_weights,predict_weights)
+    PlotResults(true_weights,predict_weights,'WeightFormer')
     
     true_weights_train,predict_weights_train = Predict(model,mz_list_train,intensity_list_train,weights_train,batch_size)
     PlotResults(true_weights,predict_weights,'WeightFormer')
