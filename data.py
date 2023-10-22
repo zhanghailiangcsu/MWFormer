@@ -60,6 +60,14 @@ def Pad_data(peak_vec,max_len=200):
             intensity_list.append(intensity)
     return mz_list,intensity_list
 
-
+def ProcessIndependent(independent_data):
+    smiles =  list(independent_data['SMILES'])
+    peak_vec = []
+    spectrums = list(independent_data['Spectramain'])
+    s = spectrums[0]
+    for s in tqdm(spectrums):
+        vec = Peak2Vec(s)
+        peak_vec.append(vec)
+    return smiles,peak_vec
 
 
