@@ -11,6 +11,10 @@ from tqdm import tqdm
 import pandas as pd
 from sklearn.metrics import mean_squared_error,mean_absolute_error
 import matplotlib.pyplot as plt
+from Model import MyDataSet
+from data import DataTran,ProcessIndependent,LengthFilter,GetWeight,Pad_data
+import torch
+from TrainModel import Predict
 
 def PlotResults(true_weights,predict_weights,title):
     '''
@@ -120,4 +124,15 @@ def CompareOther(weights_test,pred_result,title):
     mae = mean_absolute_error(weights_test2,pred_result2)
     PlotResults(weights_test2,pred_result2,title)
     return rmse,mae
-    
+
+def PredIndependent(model,independent_data,batch_size):
+    smiles_i,peak_vec_i = ProcessIndependent(independent_data)
+    smiles_i,peak_vec_i = LengthFilter(smiles_i,peak_vec_i)
+    weights_i = GetWeight(smiles_i)
+    mz_list_i,intensity_list_i = Pad_data(peak_vec_i,max_len=200)
+    mz_list_i = [torch.LongTensor(i) for i in mz_list_i]
+    intensity_list_i = [torch.tensor(i) for i in intensity_list_i]
+    weights_i = [torch.tensor(i) for i in weights_i]
+    true_weights_i,predict_weights_i = Predict(model,mz_list_i,intensity_list_i,weights_i,batch_size)
+    return true_weights_i,predict_weights_i
+
