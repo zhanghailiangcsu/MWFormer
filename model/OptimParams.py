@@ -5,7 +5,7 @@ Created on Wed Oct 18 14:26:05 2023
 @author: Administrator
 """
 import optuna
-from Model import WeightFormer, MyDataSet
+from model.Model import WeightFormer, MyDataSet
 import torch.utils.data as Data
 import torch.nn as nn
 import torch.optim as optim
@@ -13,7 +13,7 @@ import torch
 from timm.scheduler import CosineLRScheduler
 import pickle
 from utils import CalWeights
-from TrainModel import Predict
+from model.TrainModel import Predict
 
 def objective(trial):
     '''
