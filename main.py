@@ -4,15 +4,38 @@ Created on Sun Oct 15 15:42:51 2023
 
 @author: Administrator
 """
-from data import DataTran
-from TrainModel import Predict,PlotLoss,Train,dataset_sep
-from data import LengthFilter,GetWeight,Pad_data
+from data.Data import DataTran,ProcessIndependent,LengthFilter,GetWeight
+from model.TrainModel import Predict,PlotLoss,Train,dataset_sep
+from data.Data import LengthFilter,GetWeight,Pad_data
 import torch
 import pickle
-from Model import WeightFormer
-from utils import PlotResults,CalWeights,Test2vec,BulidQSARData,SaveQSARData
-from utils import LoadQRSAPredData,CompareOther,LoadPIMData
+from model.Model import WeightFormer
+from data.utils import PlotResults,CalWeights,Test2vec,BulidQSARData,SaveQSARData
+from data.utils import LoadQRSAPredData,CompareOther,LoadPIMData,PredIndependent
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+
+def GetTestSMILES(smiles,val_size = 0.2):
+    np.random.seed(0)
+    n = len(smiles)
+    perm = np.random.permutation(n)
+    n_train = int(n*(1-val_size))
+    perm_val = perm[n_train:]
+    smiles_test = [smiles[x] for x in perm_val]
+    return smiles_test
+
+def MergeData(smiles_test,weights_test,predict_weights,qsar_result,pim_result):
+    weights_test = [i.cpu().numpy() for i in weights_test]
+    weights_test = [i.ravel()[0] for i in weights_test]
+    df = pd.DataFrame()
+    df['SMILES'] = smiles_test
+    df['True Weights'] = weights_test
+    df['WeightFormer'] = predict_weights
+    df['QSAR'] = qsar_result
+    df['PIM'] = pim_result
+    return df
 
 if __name__ == '__main__':
     
@@ -38,6 +61,16 @@ if __name__ == '__main__':
     # mz_list = [torch.LongTensor(i) for i in mz_list]
     # intensity_list = [torch.tensor(i) for i in intensity_list]
     # weights = [torch.tensor(i) for i in weights]
+    
+    smiles_test = GetTestSMILES(smiles,val_size = 0.2)
+    df = MergeData(smiles_test,weights_test,predict_weights,qsar_result,pim_result)
+    df.to_csv('EIMSdata/merge.csv',index=False)
+    sb = df.iloc[0:500,:]
+    PlotResults(list(df.iloc[:,1]),list(df.iloc[:,2]),'sb1')
+    PlotResults(list(df.iloc[:,1]),list(df.iloc[:,3]),'sb2')
+    PlotResults(list(df.iloc[:,1]),list(df.iloc[:,4]),'sb3')
+    
+    
     
     # mz_list_train,intensity_list_train,weights_train,mz_list_test,intensity_list_test,weights_test= dataset_sep(mz_list,intensity_list,weights,0.2)
     # pickle.dump(mz_list_train, open('EIMSdata/mz_list_train.pickle','wb'))
@@ -77,14 +110,24 @@ if __name__ == '__main__':
     SaveQSARData(qsar_data)
     
     qrsa_pred_file = 'EIMSdata/result'
-    pred_result = LoadQRSAPredData(qrsa_pred_file)
-    rmse_q,mae_q = CompareOther(weights_test,pred_result,'QSAR')
+    qsar_result = LoadQRSAPredData(qrsa_pred_file)
+    rmse_q,mae_q = CompareOther(weights_test,qsar_result,'QSAR')
     
     
     pim_data_file = 'EIMSdata/pred_mass.npy'
-    pim_data = LoadPIMData(pim_data_file)
-    rmse_p,mae_p = CompareOther(weights_test,pim_data,'PIM')
+    pim_result = LoadPIMData(pim_data_file)
+    rmse_p,mae_p = CompareOther(weights_test,pim_result,'PIM')
     
+    independent_file = 'EIMSdata/test_11499.csv'
+    independent_data = pd.read_csv(independent_file)
+    smiles_i,true_weights_i,predict_weights_i = PredIndependent(model,independent_data,batch_size)
+    rmse_i,mae_i = CalWeights(true_weights_i,predict_weights_i)
+    PlotResults(true_weights_i,predict_weights_i,'Independent data')
+    df = pd.DataFrame()
+    df['SMILES'] = smiles_i
+    df['True Weights'] = true_weights_i
+    df['WeightFormer'] = predict_weights_i
+    df.to_csv('EIMSdata/independent_result.csv',index=False)
 
 
     
