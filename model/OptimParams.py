@@ -12,13 +12,14 @@ import torch.optim as optim
 import torch
 from timm.scheduler import CosineLRScheduler
 import pickle
-from utils import CalWeights
-from model.TrainModel import Predict
+from data.utils import CalWeights
+from model.TrainModel import Predict,dataset_sep
 
 def objective(trial):
     '''
     Define objective function
     '''
+    torch.cuda.empty_cache()
     hidden = trial.suggest_categorical('hidden',[32,64,128,256])
     batch_size = trial.suggest_categorical('batch_size',[16,32,64])
     n_layers = trial.suggest_categorical('n_layers',[3,4,5,6,7])
@@ -54,24 +55,19 @@ def objective(trial):
             step_count += 1
     model.eval()
     with torch.no_grad():
-        true_weights,predict_weights = Predict(model,mz_list_test,intensity_list_test,weights_test,batch_size)
+        true_weights,predict_weights = Predict(model,mz_list_val,intensity_list_val,weights_val,batch_size)
         rmse,_ = CalWeights(true_weights,predict_weights)
     return rmse
 
 if __name__ == '__main__':
-    with open('E:/github/WeightFormer/EIMSdata/mz_list_train.pickle','rb') as f:
+    with open('EIMSdata/mz_list_train.pickle','rb') as f:
         mz_list_train = pickle.load(f)
-    with open('E:/github/WeightFormer/EIMSdata/intensity_list_train.pickle','rb') as f:
+    with open('EIMSdata/intensity_list_train.pickle','rb') as f:
         intensity_list_train = pickle.load(f)
-    with open('E:/github/WeightFormer/EIMSdata/weights_train.pickle','rb') as f:
+    with open('EIMSdata/weights_train.pickle','rb') as f:
         weights_train = pickle.load(f)
-    with open('E:/github/WeightFormer/EIMSdata/mz_list_test.pickle','rb') as f:
-        mz_list_test = pickle.load(f)
-    with open('E:/github/WeightFormer/EIMSdata/intensity_list_test.pickle','rb') as f:
-        intensity_list_test = pickle.load(f)
-    with open('E:/github/WeightFormer/EIMSdata/weights_test.pickle','rb') as f:
-        weights_test = pickle.load(f)
+    mz_list_train,intensity_list_train,weights_train,mz_list_val,intensity_list_val,weights_val = dataset_sep(mz_list_train,intensity_list_train,weights_train,0.1)
     study_name = 'WeightFormer'
-    study = optuna.create_study(study_name=study_name,direction="maximize")
-    study.optimize(objective, n_trials=20)
+    study = optuna.create_study(study_name=study_name,direction="minimize")
+    study.optimize(objective, n_trials=2)
     params = study.best_params
