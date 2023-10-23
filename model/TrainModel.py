@@ -8,7 +8,7 @@ import os
 os.chdir('E:/github/WeightFormer')
 import numpy as np
 import torch
-from Model import MyDataSet
+from model.Model import MyDataSet
 import torch.utils.data as Data
 import torch.nn as nn
 import torch.optim as optim
