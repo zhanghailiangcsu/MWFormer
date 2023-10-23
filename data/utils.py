@@ -11,10 +11,10 @@ from tqdm import tqdm
 import pandas as pd
 from sklearn.metrics import mean_squared_error,mean_absolute_error
 import matplotlib.pyplot as plt
-from Model import MyDataSet
-from data import DataTran,ProcessIndependent,LengthFilter,GetWeight,Pad_data
+from model.Model import MyDataSet
+from data.Data import DataTran,ProcessIndependent,LengthFilter,GetWeight,Pad_data
 import torch
-from TrainModel import Predict
+from model.TrainModel import Predict
 
 def PlotResults(true_weights,predict_weights,title):
     '''
