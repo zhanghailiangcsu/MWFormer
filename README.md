@@ -1,6 +1,6 @@
 # WeightFormer
 WeightFormer: Direct Prediction of Molecular Mass from Electron lonization Mass Spectrum by Transformer
-# 1. Introduction
+# 1. ![Introduction](https://github.com/zhanghailiangcsu/WeightFormer/blob/main/logo.png)
 # 2. Depends
 1.[Anaconda](https://www.anaconda.com) for Python 3.9   
 2.[Pytorch](https://pytorch.org/) 1.12   
