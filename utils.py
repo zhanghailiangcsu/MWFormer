@@ -134,5 +134,5 @@ def PredIndependent(model,independent_data,batch_size):
     intensity_list_i = [torch.tensor(i) for i in intensity_list_i]
     weights_i = [torch.tensor(i) for i in weights_i]
     true_weights_i,predict_weights_i = Predict(model,mz_list_i,intensity_list_i,weights_i,batch_size)
-    return true_weights_i,predict_weights_i
+    return smiles_i,true_weights_i,predict_weights_i
 
