@@ -4,6 +4,8 @@ Created on Sun Oct 15 15:42:51 2023
 
 @author: Administrator
 """
+import os
+os.chdir('E:/github/WeightFormer')
 from data.Data import DataTran,ProcessIndependent,LengthFilter,GetWeight
 from model.TrainModel import Predict,PlotLoss,Train,dataset_sep
 from data.Data import LengthFilter,GetWeight,Pad_data
