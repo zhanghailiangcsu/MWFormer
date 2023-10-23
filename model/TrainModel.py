@@ -4,8 +4,6 @@ Created on Mon Oct 16 09:36:30 2023
 
 @author: Administrator
 """
-import os
-os.chdir('E:/github/WeightFormer')
 import numpy as np
 import torch
 from model.Model import MyDataSet
