@@ -4,8 +4,6 @@ Created on Sun Oct 15 12:38:34 2023
 
 @author: Administrator
 """
-import os
-os.chdir('E:/github/WeightFormer')
 import numpy as np
 from tqdm import tqdm
 from rdkit import Chem  
