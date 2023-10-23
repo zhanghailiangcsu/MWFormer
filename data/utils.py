@@ -126,6 +126,9 @@ def CompareOther(weights_test,pred_result,title):
     return rmse,mae
 
 def PredIndependent(model,independent_data,batch_size):
+    '''
+    Using WeightFormer model on independent test set
+    '''
     smiles_i,peak_vec_i = ProcessIndependent(independent_data)
     smiles_i,peak_vec_i = LengthFilter(smiles_i,peak_vec_i)
     weights_i = GetWeight(smiles_i)
