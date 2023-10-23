@@ -46,6 +46,7 @@ def SaveIndepend(name):
     df['WeightFormer'] = predict_weights_i
     df.to_csv('EIMSdata/'+name,index=False)
 
+
 if __name__ == '__main__':
     
     batch_size = 64
