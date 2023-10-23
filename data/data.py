@@ -12,6 +12,9 @@ from rdkit import Chem
 from rdkit.Chem import Descriptors
 
 def Peak2Vec(peak):
+    '''
+    Convert the peak of a string to vector
+    '''
     peak = peak.split()
     mz = np.array([])
     intensity = np.array([])
@@ -24,6 +27,9 @@ def Peak2Vec(peak):
     return vec
 
 def DataTran(ei_ms):
+    '''
+    Load NIST 2017 dataset
+    '''
     smiles = list(ei_ms['smiles'])
     peak_vec = []
     for i in tqdm(range(len(ei_ms))):
@@ -33,6 +39,9 @@ def DataTran(ei_ms):
     return smiles,peak_vec
 
 def GetWeight(smiles):
+    '''
+    Get molecular weight from SMILES
+    '''
     weights = []
     for s in tqdm(smiles):
         mol = Chem.MolFromSmiles(s)
@@ -40,20 +49,26 @@ def GetWeight(smiles):
         weights.append(mol_weight)
     return weights
     
-def LengthFilter(smiles,peak_vec):
-    index = [i for i,v in enumerate(peak_vec) if len(v) < 200]
+def LengthFilter(smiles,peak_vec,maxlen):
+    '''
+    Filter data using length filters
+    '''
+    index = [i for i,v in enumerate(peak_vec) if len(v) < maxlen]
     smiles_new = [smiles[i] for i in index]
     peak_vec_new = [peak_vec[i] for i in index]
     return smiles_new,peak_vec_new
 
-def Pad_data(peak_vec,max_len=200):
+def Pad_data(peak_vec,maxlen=200):
+    '''
+    Pad data to same dimension
+    '''
     mz_list = []
     intensity_list = []
     p = peak_vec[0]
     for p in tqdm(peak_vec):
         length = p.shape[0]
-        if length < max_len:
-            pad = max_len-length
+        if length < maxlen:
+            pad = maxlen-length
             mz = np.append(p[:,0],np.zeros(pad))
             intensity = np.append(p[:,1],np.zeros(pad))
             mz_list.append(mz)
@@ -61,6 +76,9 @@ def Pad_data(peak_vec,max_len=200):
     return mz_list,intensity_list
 
 def ProcessIndependent(independent_data):
+    '''
+    Load Independent dataset
+    '''
     smiles =  list(independent_data['SMILES'])
     peak_vec = []
     spectrums = list(independent_data['Spectramain'])
