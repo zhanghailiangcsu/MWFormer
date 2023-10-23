@@ -85,7 +85,6 @@ class SublayerConnection(nn.Module):
         return x + self.dropout(sublayer(self.norm(x)))
 
 class PositionwiseFeedForward(nn.Module):
-    "Implements FFN equation."
 
     def __init__(self, d_model, d_ff, dropout):
         super(PositionwiseFeedForward, self).__init__()
