@@ -54,14 +54,15 @@ if __name__ == '__main__':
     n_layers = 6
     attn_heads = 8
     dropout = 0
+    maxlen = 200
     
     #Load NIST2017 Dataset
     file  = 'E:/NISTEIMS/EI-MS-246809.csv'
     ei_ms = pd.read_csv(file)
     smiles,peak_vec = DataTran(ei_ms)
-    smiles,peak_vec = LengthFilter(smiles,peak_vec)
+    smiles,peak_vec = LengthFilter(smiles,peak_vec,maxlen)
     weights = GetWeight(smiles)
-    mz_list,intensity_list = Pad_data(peak_vec,max_len=200)
+    mz_list,intensity_list = Pad_data(peak_vec,maxlen)
     mz_list = [torch.LongTensor(i) for i in mz_list]
     intensity_list = [torch.tensor(i) for i in intensity_list]
     weights = [torch.tensor(i) for i in weights]
