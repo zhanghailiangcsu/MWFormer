@@ -1,6 +1,5 @@
 # WeightFormer  
-<div align=center>  
-<img src="https://github.com/zhanghailiangcsu/WeightFormer/blob/main/logo.png" width="302" height="323"/>  
+<div align=center><img src="https://github.com/zhanghailiangcsu/WeightFormer/blob/main/logo.png" width="302" height="323"/>  
 WeightFormer: Direct Prediction of Molecular Mass from Electron lonization Mass Spectrum by Transformer
 # 1. Introduction
 # 2. Depends
