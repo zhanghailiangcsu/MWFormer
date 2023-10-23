@@ -93,7 +93,7 @@ if __name__ == '__main__':
     #     weights_test = pickle.load(f)
     
     #Laod trained WeightFormer model
-    model_file = 'model.pkl'
+    model_file = 'model/model.pkl'
     model = WeightFormer(vocab_size,hidden, n_layers, attn_heads, dropout)
     model.load_state_dict(torch.load(model_file))
     
