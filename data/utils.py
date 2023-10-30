@@ -125,14 +125,14 @@ def CompareOther(weights_test,pred_result,title):
     PlotResults(weights_test2,pred_result2,title)
     return rmse,mae
 
-def PredIndependent(model,independent_data,batch_size):
+def PredIndependent(model,independent_data,batch_size,maxlen):
     '''
     Using WeightFormer model on independent test set
     '''
     smiles_i,peak_vec_i = ProcessIndependent(independent_data)
     smiles_i,peak_vec_i = LengthFilter(smiles_i,peak_vec_i)
     weights_i = GetWeight(smiles_i)
-    mz_list_i,intensity_list_i = Pad_data(peak_vec_i,max_len=200)
+    mz_list_i,intensity_list_i = Pad_data(peak_vec_i,maxlen)
     mz_list_i = [torch.LongTensor(i) for i in mz_list_i]
     intensity_list_i = [torch.tensor(i) for i in intensity_list_i]
     weights_i = [torch.tensor(i) for i in weights_i]
