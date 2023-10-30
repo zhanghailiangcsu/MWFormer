@@ -56,7 +56,7 @@ def LengthFilter(smiles,peak_vec,maxlen):
     peak_vec_new = [peak_vec[i] for i in index]
     return smiles_new,peak_vec_new
 
-def Pad_data(peak_vec,maxlen=200):
+def Pad_data(peak_vec,maxlen):
     '''
     Pad data to same dimension
     '''
