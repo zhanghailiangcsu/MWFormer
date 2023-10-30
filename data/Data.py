@@ -43,7 +43,7 @@ def GetWeight(smiles):
     weights = []
     for s in tqdm(smiles):
         mol = Chem.MolFromSmiles(s)
-        mol_weight = Descriptors.MolWt(mol) 
+        mol_weight = Descriptors.ExactMolWt(mol) 
         weights.append(mol_weight)
     return weights
     
