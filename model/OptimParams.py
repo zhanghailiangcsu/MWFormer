@@ -67,7 +67,14 @@ if __name__ == '__main__':
     with open('EIMSdata/weights_train.pickle','rb') as f:
         weights_train = pickle.load(f)
     mz_list_train,intensity_list_train,weights_train,mz_list_val,intensity_list_val,weights_val = dataset_sep(mz_list_train,intensity_list_train,weights_train,0.1)
+    
     study_name = 'WeightFormer'
     study = optuna.create_study(study_name=study_name,direction="minimize")
     study.optimize(objective, n_trials=20)
+    pickle.dump(study, open('study.pickle','wb'))
+    
+    df = study.trials_dataframe(attrs=('number', 'value', 'params', 'state'))
     params = study.best_params
+    pickle.dump(df, open('df.pickle','wb'))
+    pickle.dump(params, open('params.pickle','wb'))
+    
