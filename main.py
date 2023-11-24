@@ -17,6 +17,7 @@ from data.utils import LoadQRSAPredData,CompareOther,LoadPIMData,PredIndependent
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 
 
 def GetTestSMILES(smiles,val_size = 0.2):
@@ -130,6 +131,10 @@ if __name__ == '__main__':
     rmse_i,mae_i = CalWeights(true_weights_i,predict_weights_i)
     PlotResults(true_weights_i,predict_weights_i,'Independent data')
     SaveIndepend('independent_result.csv')
+    
+    #zhuyilikeshihua
+    
+    
     
 
 
