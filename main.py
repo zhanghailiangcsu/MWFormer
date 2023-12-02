@@ -61,7 +61,7 @@ if __name__ == '__main__':
     lr = 5e-4
     epochs = 10
     vocab_size = 1000
-    hidden = 128 
+    hidden = 256 
     n_layers = 6
     attn_heads = 8
     dropout = 0
@@ -134,7 +134,7 @@ if __name__ == '__main__':
     # Testing WeightFormer on independent test set
     independent_file = 'EIMSdata/test_11499.csv'
     independent_data = pd.read_csv(independent_file)
-    smiles_i,true_weights_i,predict_weights_i = PredIndependent(model,independent_data,batch_size)
+    smiles_i,true_weights_i,predict_weights_i = PredIndependent(model,independent_data,batch_size,maxlen)
     rmse_i,mae_i = CalWeights(true_weights_i,predict_weights_i)
     PlotResults(true_weights_i,predict_weights_i,'Independent data')
     SaveIndepend('independent_result.csv')
