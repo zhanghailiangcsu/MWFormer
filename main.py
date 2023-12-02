@@ -6,15 +6,14 @@ Created on Sun Oct 15 15:42:51 2023
 """
 import os
 os.chdir('E:/github/MWFormer')
-from data.Data import DataTran,ProcessIndependent,LengthFilter,GetWeight
-from model.TrainModel import Predict,PlotLoss,Train,dataset_sep
+from data.Data import DataTran
+from model.TrainModel import Predict,dataset_sep
 from data.Data import LengthFilter,GetWeight,Pad_data
 import torch
 import pickle
 from model.Model import WeightFormer
 from data.utils import PlotResults,CalWeights,Test2vec,BulidQSARData,SaveQSARData
 from data.utils import LoadQRSAPredData,CompareOther,LoadPIMData,PredIndependent
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
