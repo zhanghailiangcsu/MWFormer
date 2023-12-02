@@ -132,7 +132,6 @@ if __name__ == '__main__':
     PlotResults(true_weights_i,predict_weights_i,'Independent data')
     SaveIndepend('independent_result.csv')
     
-    #zhuyilikeshihua
     
     
     
