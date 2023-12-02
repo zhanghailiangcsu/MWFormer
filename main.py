@@ -17,10 +17,12 @@ from data.utils import LoadQRSAPredData,CompareOther,LoadPIMData,PredIndependent
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 
 
 def GetTestSMILES(smiles,val_size = 0.2):
+    '''
+    Get the test smiles
+    '''
     np.random.seed(0)
     n = len(smiles)
     perm = np.random.permutation(n)
@@ -30,6 +32,9 @@ def GetTestSMILES(smiles,val_size = 0.2):
     return smiles_test
 
 def MergeData(smiles_test,weights_test,predict_weights,qsar_result,pim_result):
+    '''
+    Merge the final prediction results
+    '''
     weights_test = [i.cpu().numpy() for i in weights_test]
     weights_test = [i.ravel()[0] for i in weights_test]
     df = pd.DataFrame()
@@ -41,6 +46,9 @@ def MergeData(smiles_test,weights_test,predict_weights,qsar_result,pim_result):
     return df
 
 def SaveIndepend(name):
+    '''
+    Save results on independent test sets
+    '''
     df = pd.DataFrame()
     df['SMILES'] = smiles_i
     df['True Weights'] = true_weights_i
@@ -58,7 +66,7 @@ if __name__ == '__main__':
     n_layers = 6
     attn_heads = 8
     dropout = 0
-    maxlen = 200
+    maxlen = 1000
     
     #Load NIST2017 Dataset
     file  = 'E:/NISTEIMS/EI-MS-246809.csv'
