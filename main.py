@@ -11,7 +11,7 @@ from model.TrainModel import Predict,dataset_sep
 from data.Data import LengthFilter,GetWeight,Pad_data
 import torch
 import pickle
-from model.Model import WeightFormer
+from model.Model import MWFormer
 from data.utils import PlotResults,CalWeights,Test2vec,BulidQSARData,SaveQSARData
 from data.utils import LoadQRSAPredData,CompareOther,LoadPIMData,PredIndependent
 import numpy as np
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     
     #Laod trained WeightFormer model
     model_file = 'model/model.pkl'
-    model = WeightFormer(vocab_size,hidden, n_layers, attn_heads, dropout)
+    model = MWFormer(vocab_size,hidden, n_layers, attn_heads, dropout)
     model.load_state_dict(torch.load(model_file))
     
     # Using WeightFormer to predict the molecular weight of the test set and display it
