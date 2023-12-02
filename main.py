@@ -5,7 +5,7 @@ Created on Sun Oct 15 15:42:51 2023
 @author: Administrator
 """
 import os
-os.chdir('E:/github/WeightFormer')
+os.chdir('E:/github/MWFormer')
 from data.Data import DataTran,ProcessIndependent,LengthFilter,GetWeight
 from model.TrainModel import Predict,PlotLoss,Train,dataset_sep
 from data.Data import LengthFilter,GetWeight,Pad_data
@@ -50,7 +50,7 @@ def SaveIndepend(name):
 
 if __name__ == '__main__':
     
-    batch_size = 64
+    batch_size = 32
     lr = 5e-4
     epochs = 10
     vocab_size = 1000
@@ -133,6 +133,7 @@ if __name__ == '__main__':
     SaveIndepend('independent_result.csv')
     
     #zhuyilikeshihua
+    
     
     
     
