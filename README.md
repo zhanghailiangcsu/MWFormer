@@ -19,9 +19,6 @@ git clone https://github.com/zhanghailiangcsu/MWFormer.git
 5.Install dependency with the following commands.
 ```
 pip install -r requirements.txt
-```
-6.Install  Pytorch and RDKIT
-```
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 conda install -c conda-forge rdkit
 ```
