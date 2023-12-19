@@ -20,9 +20,10 @@ git clone https://github.com/zhanghailiangcsu/MWFormer.git
 ```
 pip install -r requirements.txt
 ```
-6.Install  Pytorch
+6.Install  Pytorch and RDKIT
 ```
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+conda install -c conda-forge rdkit
 ```
 # 4. Usage
 The MWFormer is public at [homepage](https://github.com/zhanghailiangcsu), every user can download and use it.
