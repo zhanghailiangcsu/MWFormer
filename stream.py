@@ -44,7 +44,7 @@ def MWpredict(model_file,mz,intensity):
 
 def BatchPred(model_file,df):
     model = MWFormer(1000,256, 6, 8, 0)
-    model.load_state_dict(torch.load(model_file))
+    model.load_state_dict(torch.load(model_file),map_location=torch.device('cpu'))
     mz_list = []
     intensity_list = []
     for i in range(df.shape[1]):
