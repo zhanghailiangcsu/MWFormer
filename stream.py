@@ -34,7 +34,7 @@ def PlotMS(mz,intensity):
 
 def MWpredict(model_file,mz,intensity):
     model = MWFormer(1000,128, 6, 16, 0)
-    model.load_state_dict(torch.load(model_file),map_location=torch.device('cpu'))
+    model.load_state_dict(torch.load(model_file,map_location=torch.device('cpu')))
     peak_vec = np.vstack((mz,intensity)).T
     mz,intensity = Pad_data([peak_vec],1000)
     mz = [torch.LongTensor(i) for i in mz]
@@ -44,7 +44,7 @@ def MWpredict(model_file,mz,intensity):
 
 def BatchPred(model_file,df):
     model = MWFormer(1000,256, 6, 8, 0)
-    model.load_state_dict(torch.load(model_file),map_location=torch.device('cpu'))
+    model.load_state_dict(torch.load(model_file,map_location=torch.device('cpu')))
     mz_list = []
     intensity_list = []
     for i in range(df.shape[1]):
