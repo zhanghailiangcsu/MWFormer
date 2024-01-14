@@ -107,7 +107,7 @@ elif app_mode == 'Batch mode':
             st.download_button('Down predict file(.xlsx)', data=f,
                                file_name = 'Result.xlsx')
     
-    
+ 
     
 # df = []
 # for i in range(1027,1030):
