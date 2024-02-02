@@ -14,14 +14,74 @@ import torch
 from model.TrainModel import Predict
 from data.Data import Pad_data
 import pandas as pd
+from matchms.importing import load_from_msp
+'''
+输入为msp文件，不论是单个模式还是多个模式，都是msp文件
+输入的话是逗号冒号或者空格分隔开的
+1 2;2 6;10 9;15 3;16 6;25 3
+'''
+# import os
+# os.chdir('E:/github/MWFormer')
+# single_msp_file = 'Single.msp'
+# batch_msp_file = 'Batch.msp'
+# uploaded_file = 'demo.xlsx'
+# df = pd.read_excel(uploaded_file)
 
-def ProSingle(mz,intensity):
-    mz = mz.split(',')
+def ProSingleMSP(single_msp_file):
+    spectrum = list(load_from_msp(single_msp_file))[0]
+    mz = spectrum.mz
+    intensity = spectrum.intensities
     mz = np.array([int(i) for i in mz])
-    intensity = intensity.split(',')
     intensity = np.array([float(i) for i in intensity])
     intensity = intensity/max(intensity)
     return mz,intensity
+
+def ProBatchMSP(batch_msp_file):
+    spectrum = list(load_from_msp(batch_msp_file))
+    df = []
+    for sp in spectrum:
+        mz = sp.mz
+        intensity = sp.intensities
+        mz = np.array([int(i) for i in mz])
+        intensity = np.array([float(i) for i in intensity])
+        intensity = intensity/max(intensity)
+        info = np.vstack((mz,intensity)).T
+        info_list = []
+        for j in range(info.shape[0]):
+            unit = info[j,:]
+            unit1 = str(int(unit[0]))
+            unit2 = str(float(unit[1]))
+            unit = unit1+':'+unit2
+            info_list.append(unit)
+        if len(info_list) < 1000:
+            info_list.extend(['0:0.0']*(1000-len(info_list)))
+        info_list = pd.Series(info_list)
+        info_list = pd.concat([info_list],axis=1)
+        info_list.columns = ['Spectrum']
+        df.append(info_list)
+    df = pd.concat(df,axis=1)
+    return df
+    
+def ProSingle(peak_list):
+    unit = peak_list.split(';')
+    mz = []
+    intensity = []
+    for u in unit:
+        u2 = u.split()
+        mz.append(int(u2[0]))
+        intensity.append(float(u2[1]))
+    mz = np.array([int(i) for i in mz])
+    intensity = np.array([float(i) for i in intensity])
+    intensity = intensity/max(intensity)
+    return mz,intensity
+
+# def ProSingle(mz,intensity):
+#     mz = mz.split(',')
+#     mz = np.array([int(i) for i in mz])
+#     intensity = intensity.split(',')
+#     intensity = np.array([float(i) for i in intensity])
+#     intensity = intensity/max(intensity)
+#     return mz,intensity
 
 def PlotMS(mz,intensity):
     fig, ax = plt.subplots()
@@ -43,7 +103,7 @@ def MWpredict(model_file,mz,intensity):
     return predict_weights[0]
 
 def BatchPred(model_file,df):
-    model = MWFormer(1000,256, 6, 8, 0)
+    model = MWFormer(1000,128, 6, 16, 0)
     model.load_state_dict(torch.load(model_file,map_location=torch.device('cpu')))
     mz_list = []
     intensity_list = []
@@ -62,74 +122,76 @@ def BatchPred(model_file,df):
     _,predict_weights = Predict(model,mz_list,intensity_list,true_w,batch)
     return predict_weights
 
-col1, col2 = st.columns([1,2])
-with col1:
-    st.write("")
-with col2:
-    st.image("logo.png",width=130)
-st.write("MWFormer: Direct Prediction of Molecular Weights from Electron Ionization Mass Spectra for Difficult to identify Compounds")
-app_mode = st.sidebar.selectbox('Select mode',['Single mode','Batch mode'])
-
-if app_mode == 'Single mode':
-    st.title('Single mode')
-    mz = st.text_area('m/z')
-    intensity = st.text_area('Intensity')
-    if st.button('Predict'):
-        mz,intensity = ProSingle(mz,intensity)
-        mw_result = MWpredict('model/model.pkl',mz,intensity)
+def GUI():
+    col1, col2 = st.columns([1,2])
+    with col1:
+        st.write("")
+    with col2:
+        st.image("logo.png",width=130)
+    st.write("MWFormer: Direct Prediction of Molecular Weights from Electron Ionization Mass Spectra for Difficult to identify Compounds")
+    app_mode = st.sidebar.selectbox('Select mode',['Single mode','Batch mode'])
+    
+    if app_mode == 'Single mode':
+        st.title('Single mode')
+        st.subheader('Single Demo file')
+        with open('Single.msp','rb') as my_file:
+            st.download_button('Down single demo file(.msp)', data=my_file,
+                               file_name = 'Single.msp')
         
-        col1, col2 = st.columns([1,2])
-        with col1:
-            st.write('The molecular weight predicted by MWFormer is',mw_result)
-        with col2:
-            PlotMS(mz,intensity)
+        single_msp_file = st.file_uploader('Upload Single file(.msp)', type='msp',
+                                           accept_multiple_files=False)
+        # mz = st.text_area('m/z')
+        # intensity = st.text_area('Intensity')
+        if st.button('File Predict'):
+            if single_msp_file is not None:
+                mz,intensity = ProSingleMSP(single_msp_file.name)
+            else:
+                st.write("No file uploaded.")
+            mw_result = MWpredict('model/model.pkl',mz,intensity)
+            col1, col2 = st.columns([1,2])
+            with col1:
+                st.write('The molecular weight predicted by MWFormer is',mw_result)
+            with col2:
+                PlotMS(mz,intensity)
+        example_peaklist = '273 22;289 107;290 14;291 999;292 162;293 34;579 37;580 15'
+        peak_list = st.text_area('Peak List',value = example_peaklist)
+        
+        if st.button('Peak List Predict'):
+            col1, col2 = st.columns([1,2])
+            mz,intensity = ProSingle(peak_list)
+            mw_result = MWpredict('model/model.pkl',mz,intensity)
+            with col1:
+                st.write('The molecular weight predicted by MWFormer is',mw_result)
+            with col2:
+                PlotMS(mz,intensity)
+        
+    elif app_mode == 'Batch mode':
+        st.title('Batch mode')
+        st.subheader('Batch demo file') 
+        with open('Batch.msp','rb') as my_file:
+            st.download_button('Down batch demo file(.msp)', data=my_file,
+                               file_name = 'Batch.msp')
     
-elif app_mode == 'Batch mode':
-    st.title('Batch mode')
-    st.subheader('Demo file') 
-    with open('demo.xlsx','rb') as my_file:
-        st.download_button('Down demo file(.xlsx)', data=my_file,
-                           file_name = 'Demo.xlsx')
+        st.subheader('Predict file')  
+        uploaded_file = st.file_uploader('Upload file(.msp)', type='msp',
+                                         accept_multiple_files=False)
+        if st.button('Predict'):
+            if uploaded_file is not None:
+                df = ProBatchMSP(uploaded_file.name)
+            else:
+                st.write("No file uploaded.")
+            result = BatchPred('model/model.pkl',df)
+            result = pd.DataFrame(result)
+            result.columns = ['Predict Weights']
+            result = result.to_excel('result.xlsx',index=False,encoding='utf-8-sig')
+            st.subheader('Result file')
+            with open('result.xlsx','rb') as f:
+                st.download_button('Down predict file(.xlsx)', data=f,
+                                   file_name = 'Result.xlsx')
 
-    st.subheader('Predict file')  
-    uploaded_file = st.file_uploader('Upload file(.xlsx)', type='xlsx')
-    if st.button('Predict'):
-        if uploaded_file is not None:
-            df = pd.read_excel(uploaded_file)
-        else:
-            st.write("No file uploaded.")
-        result = BatchPred('model/model.pkl',df)
-        result = pd.DataFrame(result)
-        result.columns = ['Predict Weights']
-        result = result.to_excel('result.xlsx',index=False,encoding='utf-8-sig')
-        st.subheader('Result file')
-        with open('result.xlsx','rb') as f:
-            st.download_button('Down predict file(.xlsx)', data=f,
-                               file_name = 'Result.xlsx')
+if __name__ == '__main__':
     
- 
-    
-# df = []
-# for i in range(1027,1030):
-#     mz_i = mz_list_test[i].cpu().numpy()
-#     intensity_i = intensity_list_test[i].cpu().numpy()
-#     info = np.vstack((mz_i,intensity_i)).T
-#     info_list = []
-#     for j in range(info.shape[0]):
-#         unit = info[j,:]
-#         unit1 = str(int(unit[0]))
-#         unit2 = str(float(unit[1]))
-#         unit = unit1+':'+unit2
-#         info_list.append(unit)
-#     info_list = pd.Series(info_list)
-#     info_list = pd.concat([info_list],axis=1)
-#     info_list.columns = ['Spectrum']
-#     df.append(info_list)
-# df = pd.concat(df,axis=1)
-# df.to_excel('demo.xlsx',index=False,encoding='utf-8-sig')
-    
-# p = peak_vec[0:10]
-    
+    GUI()
     
     
     
