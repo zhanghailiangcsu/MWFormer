@@ -73,9 +73,11 @@ def ProSingle(peak_list):
 #     intensity = intensity/max(intensity)
 #     return mz,intensity
 
-def PlotMS(mz,intensity):
+def PlotMS(mz,intensity,mw_result):
     fig, ax = plt.subplots()
     plt.vlines(mz,0,intensity)
+    plt.vlines(mw_result,0,0.8,colors='r')
+    plt.text(mw_result,0.8,str(mw_result[0]))
     plt.hlines(0,0,max(mz)+10)
     plt.xlabel('m/z')
     plt.ylabel('Intensity')
@@ -143,7 +145,7 @@ def GUI():
             with col1:
                 st.write('The molecular weight predicted by MWFormer is',mw_result)
             with col2:
-                PlotMS(mz,intensity)
+                PlotMS(mz,intensity,mw_result)
         example_peaklist = '273 22;289 107;290 14;291 999;292 162;293 34;579 37;580 15'
         peak_list = st.text_area('Peak List',value = example_peaklist)
         
@@ -155,7 +157,7 @@ def GUI():
             with col1:
                 st.write('The molecular weight predicted by MWFormer is',mw_result)
             with col2:
-                PlotMS(mz,intensity)
+                PlotMS(mz,intensity,mw_result)
         
     elif app_mode == 'Batch mode':
         st.title('Batch mode')
