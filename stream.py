@@ -138,6 +138,7 @@ def GUI():
             else:
                 st.write("No file uploaded.")
             mw_result = MWpredict('model/model.pkl',mz,intensity)
+            mw_result = np.round(mw_result,2)
             col1, col2 = st.columns([1,2])
             with col1:
                 st.write('The molecular weight predicted by MWFormer is',mw_result)
@@ -150,6 +151,7 @@ def GUI():
             col1, col2 = st.columns([1,2])
             mz,intensity = ProSingle(peak_list)
             mw_result = MWpredict('model/model.pkl',mz,intensity)
+            mw_result = np.round(mw_result,2)
             with col1:
                 st.write('The molecular weight predicted by MWFormer is',mw_result)
             with col2:
@@ -173,7 +175,7 @@ def GUI():
             result = BatchPred('model/model.pkl',df)
             result = pd.DataFrame(result)
             result.columns = ['Predict Weights']
-            result = result.to_excel('result.xlsx',index=False,encoding='utf-8-sig')
+            result = result.to_excel('result.xlsx',index=False)
             st.subheader('Result file')
             with open('result.xlsx','rb') as f:
                 st.download_button('Down predict file(.xlsx)', data=f,
@@ -183,7 +185,6 @@ if __name__ == '__main__':
     
     GUI()
     
-    
-    
+
     
     
