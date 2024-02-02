@@ -77,7 +77,7 @@ def PlotMS(mz,intensity,mw_result):
     fig, ax = plt.subplots()
     plt.vlines(mz,0,intensity)
     plt.vlines(mw_result,0,0.8,colors='r')
-    plt.text(mw_result,0.8,str(mw_result[0]))
+    plt.text(mw_result,0.8,str(mw_result))
     plt.hlines(0,0,max(mz)+10)
     plt.xlabel('m/z')
     plt.ylabel('Intensity')
