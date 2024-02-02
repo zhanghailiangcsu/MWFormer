@@ -15,17 +15,7 @@ from model.TrainModel import Predict
 from data.Data import Pad_data
 import pandas as pd
 from matchms.importing import load_from_msp
-'''
-输入为msp文件，不论是单个模式还是多个模式，都是msp文件
-输入的话是逗号冒号或者空格分隔开的
-1 2;2 6;10 9;15 3;16 6;25 3
-'''
-# import os
-# os.chdir('E:/github/MWFormer')
-# single_msp_file = 'Single.msp'
-# batch_msp_file = 'Batch.msp'
-# uploaded_file = 'demo.xlsx'
-# df = pd.read_excel(uploaded_file)
+
 
 def ProSingleMSP(single_msp_file):
     spectrum = list(load_from_msp(single_msp_file))[0]
