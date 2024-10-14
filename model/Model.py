@@ -135,6 +135,17 @@ class MWFormer(nn.Module):
         self.intensity_linear = nn.Linear(1, hidden)
         self.flatten = nn.Flatten()
     
+    def get_mid_memory(self,mz_,intensity_):
+        atten_mask = get_attn_pad_mask(mz_)
+        inten = self.intensity_linear(intensity_)
+        output = self.embedding(mz_)
+        output = output+inten
+        memory_mid = []
+        for transformer in self.transformer_blocks:
+            output = transformer.forward(output, atten_mask)
+            memory_mid.append(output)
+        return memory_mid
+    
     def forward(self, mz_,intensity_):
         atten_mask = get_attn_pad_mask(mz_)
         # atten_mask = (mz_ == 0).unsqueeze(1).repeat(1, mz_.size(1), 1).unsqueeze(1)
