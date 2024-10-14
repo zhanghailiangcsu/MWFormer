@@ -142,8 +142,9 @@ class MWFormer(nn.Module):
         output = output+inten
         memory_mid = []
         for transformer in self.transformer_blocks:
+            output2 = transformer.attention.attention.forward(output,output,output, mask=atten_mask.squeeze(1),dropout=None)
             output = transformer.forward(output, atten_mask)
-            memory_mid.append(output)
+            memory_mid.append(output2[1])
         return memory_mid
     
     def forward(self, mz_,intensity_):
