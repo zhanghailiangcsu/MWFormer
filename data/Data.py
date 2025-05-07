@@ -8,7 +8,6 @@ import numpy as np
 from tqdm import tqdm
 from rdkit import Chem  
 from rdkit.Chem import Descriptors
-
 def Peak2Vec(peak):
     '''
     Convert the peak of a string to vector
@@ -23,12 +22,31 @@ def Peak2Vec(peak):
     intensity = intensity/max(intensity)
     vec = np.vstack((mz,intensity)).T
     return vec
-
+def Peak2Vecnoise(peak):
+    '''
+    Convert the peak of a string to vector
+    '''
+    peak = peak.split()
+    mz = np.array([])
+    intensity = np.array([])
+    for p in peak:
+        p = p.split(':')
+        mz = np.append(mz, float(p[0]))
+        intensity = np.append(intensity, float(p[1]))
+    intensity = intensity/max(intensity)
+    #I/= max(I)
+            #delete noise
+    keep = np.where(intensity > 0.01)[0]
+    mz = mz[keep]
+    intensity = intensity[keep]
+    vec = np.vstack((mz,intensity)).T
+    return vec
+# smiles,peak_vec = DataTran(ei_ms)
 def DataTran(ei_ms):
     '''
     Load NIST 2017 dataset
     '''
-    smiles = list(ei_ms['smiles'])
+    smiles = list(ei_ms['SMILES'])
     peak_vec = []
     for i in tqdm(range(len(ei_ms))):
         peak = ei_ms.iloc[i,:][1]
@@ -39,12 +57,34 @@ def DataTran(ei_ms):
 def GetWeight(smiles):
     '''
     Get molecular weight from SMILES
+from rdkit import Chem  
+from rdkit.Chem import Descriptors
+s='CC(C)COC(=O)CCCC(=O)OCc1ccccc1C(F)(F)F'
+mol = Chem.MolFromSmiles(s)
+mol1= Chem.AddHs(mol)
+print("mol Smiles:",Chem.MolToSmiles(mol))
+print("mol1 Smiles:",Chem.MolToSmiles(mol1))
+print("num ATOMs:",mol.GetNumAtoms())
+print("num ATOMs:",mol1.GetNumAtoms())
+mol_weight = Descriptors.ExactMolWt(mol1) 
+print(mol_weight)
+mol_weight2 = Descriptors.ExactMolWtt(mol1) 
+print(mol_weight2)
     '''
     weights = []
     for s in tqdm(smiles):
         mol = Chem.MolFromSmiles(s)
+        #mol1= Chem.AddHs(mol)
         mol_weight = Descriptors.ExactMolWt(mol) 
+        #mol_weight2 = Descriptors.MolWt(mol1) 
         weights.append(mol_weight)
+    return weights
+def GetWeight1(ei_ms):
+    '''
+    Get molecular weight from SMILES
+    '''
+    weights = list(ei_ms['weight'])
+   
     return weights
     
 def LengthFilter(smiles,peak_vec,maxlen):
