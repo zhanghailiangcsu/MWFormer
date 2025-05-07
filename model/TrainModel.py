@@ -10,7 +10,7 @@ from model.Model import MyDataSet
 import torch.utils.data as Data
 import torch.nn as nn
 import torch.optim as optim
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from tqdm import tqdm
 from timm.scheduler import CosineLRScheduler
 
@@ -18,7 +18,8 @@ def dataset_sep(mz_list,intensity_list,weights,val_size):
     '''
     Randomly split the dataset
     '''
-    np.random.seed(0)
+    seed=1
+    np.random.seed(1)
     n = len(weights)
     perm = np.random.permutation(n)
     n_train = int(n*(1-val_size))
@@ -34,7 +35,7 @@ def dataset_sep(mz_list,intensity_list,weights,val_size):
 
 def Train(model,mz_list_train,intensity_list_train,weights_train,batch_size,lr,epochs):
     '''
-    Training the WeightFormer model
+    Training the WeightFormer model model,train_loss,val_loss=Train(model, mz_list_train, intensity_list_train, weights_train, batch_size, lr, epochs)
     '''
     mz_list_train,intensity_list_train,weights_train,mz_list_val,intensity_list_val,weights_val = dataset_sep(mz_list_train,intensity_list_train,weights_train,0.1)
     dataset_train = MyDataSet(mz_list_train,intensity_list_train,weights_train)
@@ -46,7 +47,7 @@ def Train(model,mz_list_train,intensity_list_train,weights_train,batch_size,lr,e
     steps = epochs*len(dataloader_train)
     scheduler = CosineLRScheduler(optimizer, t_initial=steps, lr_min=0.1 * lr, warmup_t=int(0.1*steps), warmup_lr_init=0)
     step_count = 0
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cpu")#"cuda" if torch.cuda.is_available() else "cpu")
     
     model = model.to(device)
     train_loss = []
