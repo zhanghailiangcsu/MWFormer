@@ -106,6 +106,12 @@ class TransformerBlock(nn.Module):
         self.input_sublayer = SublayerConnection(size=hidden, dropout=dropout)
         self.output_sublayer = SublayerConnection(size=hidden, dropout=dropout)
         self.dropout = nn.Dropout(p=dropout)
+    def get_layer_result(self, x, mask):
+        memory_mid =[]
+        for layer in self.layers:
+            x = layer(x, mask)
+            memory_mid.append(self.norm(x))
+            return memory_mid
 
     def forward(self, x, mask):
         x = self.input_sublayer(x, lambda _x: self.attention.forward(_x, _x, _x, mask=mask))
@@ -134,18 +140,8 @@ class MWFormer(nn.Module):
         self.linear = nn.Linear(hidden, hidden)
         self.intensity_linear = nn.Linear(1, hidden)
         self.flatten = nn.Flatten()
-    
-    def get_mid_memory(self,mz_,intensity_):
-        atten_mask = get_attn_pad_mask(mz_)
-        inten = self.intensity_linear(intensity_)
-        output = self.embedding(mz_)
-        output = output+inten
-        memory_mid = []
-        for transformer in self.transformer_blocks:
-            output2 = transformer.attention.attention.forward(output,output,output, mask=atten_mask.squeeze(1),dropout=None)
-            output = transformer.forward(output, atten_mask)
-            memory_mid.append(output2[1])
-        return memory_mid
+    def get_mid_memory(self, mz_,intensity_):
+        return self.encoder.get_layer_result(self.embedding(mz_), self.intensity_linear(intensity_))
     
     def forward(self, mz_,intensity_):
         atten_mask = get_attn_pad_mask(mz_)
@@ -158,6 +154,95 @@ class MWFormer(nn.Module):
         out = output.sum(1)
         out = self.fc_out(out)
         return out
+
+class mwrnn(nn.Module):
+    def __init__(self, batch_size,vocab_size,input_size,hidden_size, dropout,num_layers):
+
+        super().__init__()
+        self.batch_size = batch_size
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
+        #self.device= device
+
+        #self.feed_forward_hidden = hidden * 4
+        self.embedding = Embedding(vocab_size,hidden_size)
+
+        self.rnn = nn.RNN(input_size=self.input_size,hidden_size=self.hidden_size,num_layers=self.num_layers, batch_first=True)
+        #self.rnn=nn.RNN(1000, 32, hidden)
+        self.fc_out = nn.Linear(hidden_size, 1)
+        self.activ2 = nn.ReLU()
+        self.linear = nn.Linear(hidden_size, hidden_size)
+        self.intensity_linear = nn.Linear(1, hidden_size)
+        self.flatten = nn.Flatten()
+    
+    def forward(self, mz_,intensity_):
+        #atten_mask = get_attn_pad_mask(mz_)
+        # atten_mask = (mz_ == 0).unsqueeze(1).repeat(1, mz_.size(1), 1).unsqueeze(1)self=model
+        inten = self.intensity_linear(intensity_)
+        mz = self.embedding(mz_)
+        output = mz+inten
+        #output=output.transpose(-2,-1)
+        #output=output.transpose(0,1)
+        a=output.shape[0]
+       # self.batch_size=a
+        hidden = torch.zeros(self.num_layers,a,self.hidden_size)
+
+        out,_ = self.rnn(output,hidden)
+        out = out.sum(1)
+       # out=out.transpose(0,1)
+        out = self.fc_out(out)
+        return out
+
+class mwlstm(nn.Module):
+    def __init__(self, batch_size,vocab_size,input_size,hidden_size, dropout,num_layers,device):
+
+        super().__init__()
+        self.batch_size = batch_size
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
+        self.device= device
+
+        #self.feed_forward_hidden = hidden * 4
+        self.embedding = Embedding(vocab_size,hidden_size)
+        self.lstm = nn.LSTM(input_size=self.input_size, hidden_size=self.hidden_size, num_layers=self.num_layers, batch_first=True)
+
+        #self.rnn = nn.RNN(input_size=self.input_size,hidden_size=self.hidden_size,num_layers=self.num_layers, batch_first=True)
+        #self.rnn=nn.RNN(1000, 32, hidden)
+        self.fc_out = nn.Linear(hidden_size, 1)
+        self.activ2 = nn.ReLU()
+        self.linear = nn.Linear(hidden_size, hidden_size)
+        self.intensity_linear = nn.Linear(1, hidden_size)
+        self.flatten = nn.Flatten()
+    
+    def forward(self, mz_,intensity_):
+        #atten_mask = get_attn_pad_mask(mz_)
+        # atten_mask = (mz_ == 0).unsqueeze(1).repeat(1, mz_.size(1), 1).unsqueeze(1)self=model
+        inten = self.intensity_linear(intensity_)
+        mz = self.embedding(mz_)
+        output = mz+inten
+        #output=output.transpose(-2,-1)
+        #output=output.transpose(0,1)
+        a=output.shape[0]
+       # self.batch_size=a
+        hidden = torch.zeros(self.num_layers,a,self.hidden_size).to(self.device)
+        c0 = torch.zeros(self.num_layers,a,self.hidden_size).to(self.device)
+
+        out,_ = self.lstm(output, (hidden, c0))
+
+        #out,_ = self.lstm(output,hidden)
+        out = out.sum(1)
+       # out=out.transpose(0,1)
+        out = self.fc_out(out)
+        return out
+
+
+
+
+
+
+
 
 
 
